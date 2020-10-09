@@ -5,25 +5,21 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-LATEXMK=latexmk
-
 SOURCES=$(wildcard *.tex)
-OUT=out
+IMAGES=$(wildcard images/**)
 
-MAIN=main
 JOBNAME=main
 
-(JOBNAME).pdf: $(SOURCES)
-	$(LATEXMK) -jobname=$(JOBNAME)
+all: out/$(JOBNAME).pdf
 
+
+out/$(JOBNAME).pdf: $(SOURCES) $(IMAGES) bib
+	latexmk -jobname=$(JOBNAME)
 
 bib:
-	$(LATEXMK) -jobname=$(JOBNAME)
-	cp -f $(OUT)/$(JOBNAME).bbl $(MAIN)-lit.tex
+	./scripts/format_bib.sh --file bibliography.bib
 
 clean:
-	$(LATEXMK) -C
-	rm -rf $(OUT)/*
-	rm -f  $(MAIN)-lit.tex
+	latexmk -C
 
-.PHONY: bib clean
+.PHONY: all clean bib
